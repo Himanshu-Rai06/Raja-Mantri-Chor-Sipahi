@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raja Mantri Online</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="lobby-screen" class="screen">
+        <div class="notebook-paper center-box">
+            <h1>Raja Mantri Online</h1>
+            <input type="text" id="username" placeholder="Your Name" maxlength="10">
+            
+            <div class="lobby-controls">
+                <button class="btn-ink" onclick="window.createRoom()">Create Room</button>
+                <div class="join-group">
+                    <input type="text" id="room-code-input" placeholder="Enter Code">
+                    <button class="btn-ink" onclick="window.joinRoom()">Join</button>
+                </div>
+            </div>
+            <p id="lobby-msg"></p>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen hidden">
+        
+        <div class="game-area">
+            
+            <div class="top-bar">
+                <div class="room-info">Room: <span id="display-room-code">---</span></div>
+                <div id="game-status">Waiting...</div>
+                
+                <button id="mobile-score-btn" class="hidden-desktop" onclick="toggleScoreboard()">📊 Scores</button>
+            </div>
+
+            <div id="table-surface"></div>
+
+            <div class="player-dock" id="player-dock"></div>
+
+            <button id="main-action-btn" class="btn-ink hidden" onclick="window.handleActionBtn()">Throw Chits</button>
+        </div>
+
+        <div class="scoreboard-area" id="scoreboard-panel">
+            <div class="notebook-paper full-height">
+                
+                <button id="close-score-btn" class="hidden-desktop" onclick="toggleScoreboard()">✕</button>
+
+                <h3>Score Sheet</h3>
+                <div class="round-indicator">Rd: <span id="round-num">1</span>/10</div>
+                
+                <table id="score-table">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Tot</th>
+                        </tr>
+                    </thead>
+                    <tbody id="score-body">
+                        </tbody>
+                </table>
+
+                <div id="log-area">
+                    <p>Welcome to the game!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
