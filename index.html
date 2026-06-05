@@ -2,72 +2,107 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Raja Mantri Online</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Patrick+Hand&family=Caveat:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="lobby-screen" class="screen">
-        <div class="notebook-paper center-box">
-            <h1>Raja Mantri Online</h1>
-            <input type="text" id="username" placeholder="Your Name" maxlength="10">
-            
-            <div class="lobby-controls">
-                <button class="btn-ink" onclick="window.createRoom()">Create Room</button>
-                <div class="join-group">
-                    <input type="text" id="room-code-input" placeholder="Enter Code">
-                    <button class="btn-ink" onclick="window.joinRoom()">Join</button>
-                </div>
+    <!-- ===================== LOBBY ===================== -->
+    <div id="lobby-screen">
+        <div class="center-box">
+            <h1>Raja Mantri</h1>
+            <p class="subtitle">Chor ✦ Sipahi</p>
+            <input type="text" id="username" placeholder="Your Name" maxlength="12" autocomplete="off">
+
+            <button class="btn-ink" onclick="window.createRoom()">🎲 Create Room</button>
+
+            <div class="divider"><span>or</span></div>
+
+            <div class="join-group">
+                <input type="text" id="room-code-input" placeholder="Room Code" maxlength="4" autocomplete="off">
+                <button class="btn-ink secondary" onclick="window.joinRoom()">Join →</button>
             </div>
+
             <p id="lobby-msg"></p>
         </div>
     </div>
 
-    <div id="game-screen" class="screen hidden">
-        
+    <!-- ===================== GAME ===================== -->
+    <div id="game-screen" class="hidden">
+
         <div class="game-area">
-            
+
+            <!-- TOP BAR -->
             <div class="top-bar">
-                <div class="room-info">Room: <span id="display-room-code">---</span></div>
-                <div id="game-status">Waiting...</div>
-                
-                <button id="mobile-score-btn" class="hidden-desktop" onclick="toggleScoreboard()">📊 Scores</button>
+                <div class="room-pill">
+                    <span class="room-label">Room</span>
+                    <span id="display-room-code" class="room-code">---</span>
+                </div>
+                <div id="game-status" class="status-text">Waiting...</div>
+                <div class="top-bar-actions">
+                    <button id="mobile-score-btn" class="icon-btn hidden-desktop" onclick="toggleScoreboard()" title="Scores">📊</button>
+                    <button id="fullscreen-btn" class="icon-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+                </div>
             </div>
 
-            <div id="table-surface"></div>
+            <!-- TABLE -->
+            <div id="table-surface">
+                <!-- Chits are injected here by JS -->
+            </div>
 
-            <div class="player-dock" id="player-dock"></div>
+            <!-- ACTION BUTTON (floating center) -->
+            <button id="main-action-btn" class="btn-action hidden" onclick="window.handleActionBtn()">Throw Chits!</button>
 
-            <button id="main-action-btn" class="btn-ink hidden" onclick="window.handleActionBtn()">Throw Chits</button>
+            <!-- PLAYER DOCK -->
+            <div class="player-dock" id="player-dock">
+                <!-- Player slots injected by JS -->
+            </div>
+
         </div>
 
+        <!-- SCOREBOARD PANEL -->
         <div class="scoreboard-area" id="scoreboard-panel">
             <div class="notebook-paper full-height">
-                
-                <button id="close-score-btn" class="hidden-desktop" onclick="toggleScoreboard()">✕</button>
+
+                <button id="close-score-btn" class="close-btn hidden-desktop" onclick="toggleScoreboard()">✕</button>
 
                 <h3>Score Sheet</h3>
-                <div class="round-indicator">Rd: <span id="round-num">1</span>/10</div>
-                
+                <div class="round-indicator">Round <span id="round-num">1</span> / 10</div>
+
                 <table id="score-table">
                     <thead>
                         <tr>
                             <th>Player</th>
-                            <th>Tot</th>
+                            <th>Score</th>
                         </tr>
                     </thead>
-                    <tbody id="score-body">
-                        </tbody>
+                    <tbody id="score-body"></tbody>
                 </table>
 
                 <div id="log-area">
-                    <p>Welcome to the game!</p>
+                    <p class="log-entry">Welcome to Raja Mantri!</p>
                 </div>
             </div>
         </div>
+
     </div>
+
+    <!-- ===================== GUESS MODAL ===================== -->
+    <div id="guess-modal" class="modal-overlay hidden">
+        <div class="modal-paper">
+            <p class="modal-prompt">Mantri ji, kya aap sure hain?</p>
+            <p class="modal-question">क्या <strong id="modal-target-name"></strong> CHOR है?</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-yes" id="modal-yes-btn">✓ Haan!</button>
+                <button class="btn-modal btn-no" onclick="closeGuessModal()">✗ Nahi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== RESULT TOAST ===================== -->
+    <div id="result-toast" class="toast hidden"></div>
 
     <script type="module" src="script.js"></script>
 </body>
