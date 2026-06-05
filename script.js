@@ -508,8 +508,10 @@ function openGuessModal(targetPlayerIdx, targetName, targetRole) {
     guessModal.classList.remove('hidden');
 
     document.getElementById('modal-yes-btn').onclick = () => {
+        if (guessTarget) {
+            makeGuess(guessTarget.playerIdx, guessTarget.role);
+        }
         closeGuessModal();
-        if (guessTarget) makeGuess(guessTarget.playerIdx, guessTarget.role);
     };
 }
 
