@@ -1,843 +1,663 @@
-/* =========================================
-   ROOT VARIABLES
-   ========================================= */
-:root {
-    --bg-wood: #7a5c4e;
-    --wood-dark: #4e342e;
-    --wood-light: #9c7b6e;
-    --paper: #fffef0;
-    --paper-aged: #f5f0d8;
-    --paper-line: #c4bfa0;
-    --ink: #2c3e50;
-    --ink-light: #546e7a;
-    --accent-red: #c0392b;
-    --accent-green: #27ae60;
-    --accent-gold: #f1c40f;
-    --accent-blue: #2980b9;
-    --shadow-deep: rgba(0,0,0,0.5);
-    --shadow-light: rgba(0,0,0,0.2);
-
-    --wood-gradient: linear-gradient(160deg, #9c7b6e 0%, #7a5c4e 40%, #4e342e 100%);
-    --paper-lines: repeating-linear-gradient(
-        transparent, transparent 27px, var(--paper-line) 28px
-    );
-    --wood-grain: repeating-linear-gradient(
-        87deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.03) 2px,
-        rgba(0,0,0,0.03) 4px
-    );
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body {
-    height: 100%;
-    overflow: hidden;
-}
-
-body {
-    font-family: 'Indie Flower', cursive;
-    background: #1a1a1a;
-    color: var(--ink);
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-font-smoothing: antialiased;
-}
-
-.hidden { display: none !important; }
-
-/* =========================================
-   1. LOBBY SCREEN
-   ========================================= */
-#lobby-screen {
-    position: fixed;
-    inset: 0;
-    background: var(--wood-gradient);
-    background-image: var(--wood-gradient), var(--wood-grain);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
-}
-
-.center-box {
-    width: 100%;
-    max-width: 380px;
-    background: var(--paper);
-    background-image: var(--paper-lines);
-    padding: 36px 32px 28px;
-    box-shadow: 
-        0 20px 60px rgba(0,0,0,0.6),
-        4px 4px 0 #d4c9a0,
-        inset 0 0 0 1px rgba(0,0,0,0.05);
-    transform: rotate(-1.2deg);
-    border-radius: 2px;
-    position: relative;
-}
-
-/* Red margin line */
-.center-box::before {
-    content: '';
-    position: absolute;
-    left: 52px;
-    top: 0; bottom: 0;
-    width: 2px;
-    background: rgba(220, 60, 60, 0.35);
-}
-
-.center-box h1 {
-    font-family: 'Caveat', cursive;
-    font-size: 3rem;
-    color: var(--accent-red);
-    text-align: center;
-    line-height: 1;
-    text-decoration: underline wavy var(--accent-red);
-    margin-bottom: 2px;
-}
-
-.subtitle {
-    text-align: center;
-    color: var(--ink-light);
-    font-size: 1rem;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-}
-
-.center-box input {
-    display: block;
-    width: 100%;
-    margin: 10px 0;
-    padding: 8px 12px;
-    font-family: 'Indie Flower', cursive;
-    font-size: 1.15rem;
-    background: transparent;
-    border: none;
-    border-bottom: 2px dashed var(--ink);
-    text-align: center;
-    outline: none;
-    color: var(--ink);
-    transition: border-color 0.2s;
-}
-.center-box input:focus {
-    border-bottom-color: var(--accent-red);
-}
-
-.btn-ink {
-    display: block;
-    width: 100%;
-    margin-top: 12px;
-    padding: 12px;
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    font-family: 'Indie Flower', cursive;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: transform 0.1s, box-shadow 0.1s;
-    box-shadow: 0 4px 0 #1a252f;
-    position: relative;
-}
-.btn-ink:hover { transform: translateY(-1px); box-shadow: 0 6px 0 #1a252f; }
-.btn-ink:active { transform: translateY(2px); box-shadow: 0 2px 0 #1a252f; }
-
-.btn-ink.secondary {
-    background: transparent;
-    color: var(--ink);
-    border: 2px dashed var(--ink);
-    box-shadow: none;
-    flex: 1;
-    margin-top: 0;
-}
-.btn-ink.secondary:hover { background: rgba(0,0,0,0.05); }
-
-.divider {
-    text-align: center;
-    color: var(--ink-light);
-    font-size: 0.9rem;
-    margin: 12px 0 4px;
-    position: relative;
-}
-.divider::before, .divider::after {
-    content: '';
-    position: absolute;
-    top: 50%; width: 40%;
-    height: 1px;
-    background: var(--paper-line);
-}
-.divider::before { left: 0; }
-.divider::after { right: 0; }
-
-.join-group {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-top: 8px;
-}
-.join-group input {
-    flex: 1;
-    margin: 0;
-    letter-spacing: 3px;
-    font-size: 1.1rem;
-}
-
-#lobby-msg {
-    text-align: center;
-    color: var(--accent-red);
-    font-size: 0.9rem;
-    min-height: 20px;
-    margin-top: 10px;
-}
-
-/* =========================================
-   2. GAME SCREEN LAYOUT
-   ========================================= */
-#game-screen {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    height: 100dvh; /* Dynamic viewport for mobile */
-    overflow: hidden;
-}
-
-.game-area {
-    flex: 3;
-    background: var(--wood-gradient);
-    background-image: var(--wood-gradient), var(--wood-grain);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    box-shadow: inset -5px 0 20px rgba(0,0,0,0.4);
-    z-index: 1;
-    min-width: 0;
-}
-
-.scoreboard-area {
-    flex: 0 0 300px;
-    background: #e8e0c8;
-    position: relative;
-    z-index: 2;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.25);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-}
-
-/* =========================================
-   3. TOP BAR
-   ========================================= */
-.top-bar {
-    padding: 10px 16px;
-    background: rgba(0,0,0,0.25);
-    backdrop-filter: blur(4px);
-    color: rgba(255,255,255,0.92);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    z-index: 10;
-    flex-shrink: 0;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.room-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.2);
-    padding: 4px 12px;
-    border-radius: 20px;
-    white-space: nowrap;
-}
-.room-label { font-size: 0.8rem; opacity: 0.7; }
-.room-code {
-    font-family: 'Patrick Hand', cursive;
-    font-size: 1.1rem;
-    font-weight: bold;
-    letter-spacing: 2px;
-    color: var(--accent-gold);
-}
-
-.status-text {
-    font-size: 1rem;
-    text-align: center;
-    flex: 1;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    font-family: 'Patrick Hand', cursive;
-}
-
-.top-bar-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.icon-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, transform 0.1s;
-    flex-shrink: 0;
-}
-.icon-btn:hover { background: rgba(255,255,255,0.25); }
-.icon-btn:active { transform: scale(0.92); }
-
-/* =========================================
-   4. TABLE SURFACE
-   ========================================= */
-#table-surface {
-    flex: 1;
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    min-height: 0;
-}
-
-/* Wood ring on table */
-#table-surface::before {
-    content: '';
-    position: absolute;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.06);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-}
-
-/* =========================================
-   5. MAIN ACTION BUTTON
-   ========================================= */
-.btn-action {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 200;
-    padding: 16px 44px;
-    font-family: 'Caveat', cursive;
-    font-size: 1.6rem;
-    font-weight: 600;
-    background: var(--ink);
-    color: #fff;
-    border: 3px solid rgba(255,255,255,0.8);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 2px 0 #1a252f;
-    border-radius: 50px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: transform 0.15s, box-shadow 0.15s;
-    animation: pulse-btn 2s ease-in-out infinite;
-}
-.btn-action:hover {
-    transform: translate(-50%, -50%) scale(1.05);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 2px 0 #1a252f;
-    animation: none;
-}
-.btn-action:active { transform: translate(-50%, -50%) scale(0.97); }
-
-@keyframes pulse-btn {
-    0%, 100% { box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 2px 0 #1a252f; }
-    50% { box-shadow: 0 8px 40px rgba(241,196,15,0.4), 0 2px 0 #1a252f; }
-}
-
-/* =========================================
-   6. PLAYER DOCK
-   ========================================= */
-.player-dock {
-    height: 120px;
-    background: rgba(0,0,0,0.35);
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    align-items: center;
-    padding: 10px 12px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-    overflow-x: auto;
-    overflow-y: visible;
-}
-
-.p-slot {
-    flex: 0 0 auto;
-    width: 90px;
-    height: 90px;
-    position: relative;
-    border: 2px dashed rgba(255,255,255,0.25);
-    border-radius: 12px;
-    background: rgba(255,255,255,0.06);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
-    overflow: visible; /* Allow chit corner poke out */
-}
-
-.p-name {
-    position: relative;
-    z-index: 10;
-    font-family: 'Patrick Hand', cursive;
-    font-size: 0.95rem;
-    color: rgba(255,255,255,0.9);
-    text-align: center;
-    font-weight: bold;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    background: rgba(0,0,0,0.35);
-    padding: 2px 8px;
-    border-radius: 10px;
-    pointer-events: none;
-    max-width: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.p-slot.active {
-    border-color: var(--accent-gold);
-    border-style: solid;
-    box-shadow: 0 0 20px rgba(241,196,15,0.5), inset 0 0 15px rgba(241,196,15,0.1);
-    background: rgba(241,196,15,0.15);
-    animation: slot-pulse 1.5s ease-in-out infinite;
-}
-
-.p-slot.me {
-    border-style: solid;
-    border-color: var(--accent-green);
-    background: rgba(39,174,96,0.15);
-    box-shadow: 0 0 12px rgba(39,174,96,0.3);
-}
-
-.p-slot.mantri-can-pick {
-    cursor: pointer;
-    border-color: var(--accent-red);
-    border-style: solid;
-    box-shadow: 0 0 18px rgba(192,57,43,0.5);
-    animation: slot-pulse-red 1.2s ease-in-out infinite;
-}
-
-@keyframes slot-pulse {
-    0%, 100% { box-shadow: 0 0 12px rgba(241,196,15,0.4); }
-    50% { box-shadow: 0 0 25px rgba(241,196,15,0.8); }
-}
-@keyframes slot-pulse-red {
-    0%, 100% { box-shadow: 0 0 12px rgba(192,57,43,0.4); }
-    50% { box-shadow: 0 0 25px rgba(192,57,43,0.8); }
-}
-
-/* =========================================
-   7. CHITS
-   ========================================= */
-.chit {
-    position: absolute;
-    z-index: 50;
-    cursor: pointer;
-    transform: translate(-50%, -50%);
-    transition: 
-        left 0.8s cubic-bezier(0.25, 0.8, 0.25, 1),
-        top 0.8s cubic-bezier(0.25, 0.8, 0.25, 1),
-        transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1),
-        width 0.3s ease,
-        height 0.3s ease,
-        box-shadow 0.2s ease;
-
-    width: 62px;
-    height: 62px;
-    background: linear-gradient(135deg, #fffef5 0%, #f5f0e0 100%);
-    border: 1px solid #ddd5b0;
-    border-radius: 3px;
-    box-shadow: 3px 4px 8px rgba(0,0,0,0.35), 1px 1px 0 rgba(255,255,255,0.5) inset;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Patrick Hand', cursive;
-    font-weight: bold;
-    color: var(--ink);
-    overflow: hidden;
-}
-
-/* Folded corner */
-.chit::after {
-    content: '';
-    position: absolute;
-    bottom: 0; right: 0;
-    width: 0; height: 0;
-    border-style: solid;
-    border-width: 0 0 16px 16px;
-    border-color: transparent transparent #c8b880 transparent;
-    pointer-events: none;
-}
-
-/* Hover (on table, not in-hand) */
-.chit:not(.in-hand):not(.open):hover {
-    transform: translate(-50%, -50%) scale(1.12);
-    box-shadow: 5px 6px 14px rgba(0,0,0,0.45);
-    z-index: 60;
-}
-
-/* --- STATE: IN HAND (corner tuck) --- */
-.chit.in-hand {
-    /* Absolute within the slot */
-    position: absolute !important;
-    top: -8px !important;
-    right: -8px !important;
-    left: auto !important;
-    bottom: auto !important;
-
-    width: 36px !important;
-    height: 36px !important;
-    transform: rotate(12deg) !important;
-
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.25) !important;
-    z-index: 5 !important;
-    cursor: default;
-    pointer-events: none;
-    transition: width 0.3s ease, height 0.3s ease, transform 0.3s ease !important;
-}
-.chit.in-hand::after {
-    border-width: 0 0 10px 10px;
-}
-
-/* --- STATE: REVEALED (big card in slot) --- */
-.chit.revealed {
-    /* Filled inside the slot */
-    position: absolute !important;
-    top: 5px !important;
-    left: 5px !important;
-    right: 5px !important;
-    bottom: 5px !important;
-    width: auto !important;
-    height: auto !important;
-
-    transform: rotate(0deg) !important;
-    background: var(--paper) !important;
-    background-image: var(--paper-lines) !important;
-    border: 2px solid var(--ink) !important;
-    z-index: 20 !important;
-    cursor: default;
-    animation: revealPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.chit.revealed::after { display: none; }
-
-@keyframes revealPop {
-    0% { opacity: 0; transform: rotate(15deg) scale(0.5) !important; }
-    100% { opacity: 1; transform: rotate(0deg) scale(1) !important; }
-}
-
-/* Chit role text */
-.chit-role {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 2px;
-}
-.chit-role .role-name {
-    font-family: 'Caveat', cursive;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--accent-red);
-    text-transform: uppercase;
-    line-height: 1;
-}
-.chit-role .role-emoji {
-    font-size: 1.4rem;
-    line-height: 1;
-}
-.chit-role .role-pts {
-    font-size: 0.65rem;
-    color: var(--ink-light);
-    font-family: 'Indie Flower', cursive;
-}
-
-/* Chit folded (face down) lines — pencil sketch feel */
-.chit-back {
-    width: 70%;
-    height: 2px;
-    background: rgba(0,0,0,0.1);
-    border-radius: 2px;
-    box-shadow: 0 8px 0 rgba(0,0,0,0.08), 0 16px 0 rgba(0,0,0,0.06);
-}
-
-/* =========================================
-   8. SCOREBOARD
-   ========================================= */
-.notebook-paper {
-    background: var(--paper-aged);
-    background-image: var(--paper-lines);
-    padding: 20px 18px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    border-left: 4px solid #e05035;
-    position: relative;
-    overflow-y: auto;
-}
-
-/* Red margin left-line inside */
-.notebook-paper::before {
-    content: '';
-    position: absolute;
-    left: 44px;
-    top: 0; bottom: 0;
-    width: 1px;
-    background: rgba(220,80,60,0.2);
-    pointer-events: none;
-}
-
-.notebook-paper h3 {
-    font-family: 'Caveat', cursive;
-    font-size: 1.6rem;
-    text-align: center;
-    margin-bottom: 4px;
-    color: var(--accent-red);
-    text-decoration: underline wavy;
-}
-
-.round-indicator {
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--ink-light);
-    margin-bottom: 14px;
-    font-family: 'Patrick Hand', cursive;
-}
-
-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-td, th {
-    padding: 7px 8px;
-    border-bottom: 1px solid var(--paper-line);
-    text-align: left;
-    font-family: 'Patrick Hand', cursive;
-    font-size: 0.95rem;
-}
-td:last-child, th:last-child { text-align: right; }
-th {
-    border-bottom: 2px solid var(--ink);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--ink-light);
-}
-tr.highlight-row td { color: var(--accent-red); font-weight: bold; }
-
-#log-area {
-    margin-top: auto;
-    padding-top: 12px;
-    border-top: 1px dashed var(--paper-line);
-    font-size: 0.85rem;
-    color: var(--ink-light);
-    font-family: 'Patrick Hand', cursive;
-    max-height: 160px;
-    overflow-y: auto;
-}
-.log-entry { padding: 3px 0; }
-.log-entry::before { content: '> '; color: var(--accent-red); }
-
-/* =========================================
-   9. MODALS
-   ========================================= */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(3px);
-    z-index: 3000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.2s ease;
-}
-
-.modal-paper {
-    background: var(--paper);
-    background-image: var(--paper-lines);
-    padding: 32px 28px;
-    max-width: 340px;
-    width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 4px 4px 0 #d4c9a0;
-    transform: rotate(-1deg);
-    border-radius: 2px;
-    text-align: center;
-    border-left: 4px solid var(--accent-red);
-}
-
-.modal-prompt {
-    font-size: 0.9rem;
-    color: var(--ink-light);
-    margin-bottom: 8px;
-}
-
-.modal-question {
-    font-family: 'Caveat', cursive;
-    font-size: 1.6rem;
-    color: var(--ink);
-    margin-bottom: 24px;
-    line-height: 1.3;
-}
-.modal-question strong { color: var(--accent-red); }
-
-.modal-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.btn-modal {
-    flex: 1;
-    padding: 12px;
-    font-family: 'Indie Flower', cursive;
-    font-size: 1.1rem;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: transform 0.1s, box-shadow 0.1s;
-    box-shadow: 0 3px 0 rgba(0,0,0,0.3);
-}
-.btn-modal:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.3); }
-
-.btn-yes {
-    background: var(--accent-green);
-    color: white;
-    border: 2px solid #1e8449;
-}
-.btn-no {
-    background: #f0f0f0;
-    color: var(--ink);
-    border: 2px solid #ccc;
-}
-
-/* =========================================
-   10. TOAST
-   ========================================= */
-.toast {
-    position: fixed;
-    bottom: 140px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--ink);
-    color: white;
-    font-family: 'Patrick Hand', cursive;
-    font-size: 1.1rem;
-    padding: 12px 24px;
-    border-radius: 30px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-    z-index: 2000;
-    white-space: nowrap;
-    animation: toastIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.toast.toast-win { background: var(--accent-green); }
-.toast.toast-lose { background: var(--accent-red); }
-
-@keyframes toastIn {
-    from { transform: translateX(-50%) translateY(20px); opacity: 0; }
-    to   { transform: translateX(-50%) translateY(0); opacity: 1; }
-}
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* =========================================
-   11. CLOSE BUTTON (Scoreboard mobile)
-   ========================================= */
-.close-btn {
-    position: absolute;
-    top: 14px; right: 14px;
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    border: 2px solid var(--accent-red);
-    background: transparent;
-    color: var(--accent-red);
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Indie Flower', cursive;
-    z-index: 10;
-}
-
-/* =========================================
-   12. MOBILE RESPONSIVE
-   ========================================= */
-.hidden-desktop { display: none; }
-
-@media (max-width: 700px) {
-    .hidden-desktop { display: flex !important; }
-
-    #game-screen { flex-direction: column; }
-
-    .game-area {
-        width: 100%;
-        flex: 1;
-        min-height: 0;
-    }
-
-    /* Scoreboard becomes full-screen slide-up overlay */
-    .scoreboard-area {
-        position: fixed;
-        inset: 0;
-        z-index: 2000;
-        /* Hidden below screen — transition animates it up */
-        transform: translateY(105%);
-        box-shadow: none;
-        flex: none;
-        width: 100%;
-        /* Backdrop effect when opening */
-        transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
-    }
-    .scoreboard-area.active {
-        transform: translateY(0);
-        box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
-    }
-    .notebook-paper {
-        border-left: none;
-        border-top: 5px solid var(--accent-red);
-        padding-top: 56px;
-    }
-    .notebook-paper::before { display: none; }
-
-    /* Chit sizes on mobile */
-    .chit { width: 52px; height: 52px; }
-    .chit.in-hand { width: 30px !important; height: 30px !important; }
-
-    /* Dock */
-    .player-dock { height: 110px; gap: 6px; padding: 8px; }
-    .p-slot { width: 78px; height: 84px; }
-    .p-name { font-size: 0.82rem; }
-
-    /* Toast above dock */
-    .toast { bottom: 125px; font-size: 0.95rem; }
-
-    /* Log hidden on mobile (space saver) */
-    #log-area { display: none; }
-
-    /* Modal */
-    .modal-paper { transform: none; }
-}
-
-/* Fullscreen tweaks — on desktop fullscreen the sidebar stays as-is.
-   On mobile fullscreen we do NOT force the scoreboard open; it keeps
-   its slide-up state (controlled by .active class via JS). */
-:fullscreen .game-area,
-:-webkit-full-screen .game-area {
-    height: 100vh;
-}
-:fullscreen #game-screen,
-:-webkit-full-screen #game-screen {
-    height: 100vh;
-}
-/* Desktop fullscreen: scoreboard sidebar stays visible normally */
-@media (min-width: 701px) {
-    :fullscreen .scoreboard-area,
-    :-webkit-full-screen .scoreboard-area {
-        position: relative;
-        transform: none !important;
-        flex: 0 0 300px;
+// ============================================================
+//  RAJA MANTRI CHOR SIPAHI — script.js
+//  Fixed: race conditions, role lookup, state guards,
+//         mobile chit bounds, fullscreen, custom modal,
+//         host-only controls, proper chit class management
+// ============================================================
+
+// --- 1. FIREBASE IMPORTS & CONFIG ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getDatabase, ref, set, onValue, update, get, child
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDp1jpgkbQhmf5CTstcJzBwVGO3UZHQ3Sw",
+    authDomain: "rmcs-game.firebaseapp.com",
+    databaseURL: "https://rmcs-game-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "rmcs-game",
+    storageBucket: "rmcs-game.firebasestorage.app",
+    messagingSenderId: "520572114445",
+    appId: "1:520572114445:web:c239efae854a4589202744"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// --- 2. STATE ---
+let myName        = "";
+let roomCode      = "";
+let myPlayerIndex = -1;
+let isHost        = false;   // Only index-0 player is host
+let currentGameState = {};
+let guessTarget   = null;    // { playerIdx, role } — pending modal
+
+// --- 3. DOM REFS ---
+const lobbyScreen = document.getElementById('lobby-screen');
+const gameScreen  = document.getElementById('game-screen');
+const dock        = document.getElementById('player-dock');
+const tableEl     = document.getElementById('table-surface');
+const logArea     = document.getElementById('log-area');
+const statusDiv   = document.getElementById('game-status');
+const actionBtn   = document.getElementById('main-action-btn');
+const guessModal  = document.getElementById('guess-modal');
+const toast       = document.getElementById('result-toast');
+
+// ============================================================
+//  4. LOBBY FUNCTIONS
+// ============================================================
+
+window.createRoom = async function () {
+    const name = document.getElementById('username').value.trim();
+    if (!name) { showLobbyMsg("Please enter your name!"); return; }
+
+    myName   = name;
+    roomCode = String(Math.floor(1000 + Math.random() * 9000));
+
+    const initialData = {
+        players: [{ name: myName, score: 0 }],
+        state: 'WAITING',
+        round: 1,
+        roles: [],
+        chits: []
+    };
+
+    await set(ref(db, 'rooms/' + roomCode), initialData);
+    enterGame(roomCode, 0);
+};
+
+window.joinRoom = function () {
+    const name = document.getElementById('username').value.trim();
+    const code = document.getElementById('room-code-input').value.trim();
+
+    if (!name) { showLobbyMsg("Please enter your name!"); return; }
+    if (!code) { showLobbyMsg("Please enter a room code!"); return; }
+
+    myName   = name;
+    roomCode = code;
+
+    get(child(ref(db), `rooms/${roomCode}`)).then((snapshot) => {
+        if (!snapshot.exists()) { showLobbyMsg("Room not found! Check the code."); return; }
+
+        const data = snapshot.val();
+
+        // Re-joining by name (same session / refresh)
+        const existingIdx = data.players
+            ? data.players.findIndex(p => p.name === myName)
+            : -1;
+
+        if (existingIdx !== -1) {
+            enterGame(roomCode, existingIdx);
+            return;
+        }
+
+        const playerCount = data.players ? data.players.length : 0;
+        if (playerCount >= 4) { showLobbyMsg("Room is full (4/4)!"); return; }
+
+        const newIndex = playerCount;
+        set(ref(db, `rooms/${roomCode}/players/${newIndex}`), {
+            name: myName, score: 0
+        }).then(() => enterGame(roomCode, newIndex));
+    }).catch(() => showLobbyMsg("Connection error. Try again."));
+};
+
+function showLobbyMsg(msg) {
+    document.getElementById('lobby-msg').textContent = msg;
+}
+
+function enterGame(code, index) {
+    roomCode      = code;
+    myPlayerIndex = index;
+    isHost        = (index === 0);
+
+    lobbyScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
+    document.getElementById('display-room-code').textContent = code;
+
+    // Subscribe to all state changes
+    onValue(ref(db, 'rooms/' + roomCode), (snapshot) => {
+        const data = snapshot.val();
+        if (data) renderGame(data);
+        else { alert("Room was deleted."); location.reload(); }
+    });
+}
+
+// ============================================================
+//  5. MAIN RENDERER
+// ============================================================
+
+function renderGame(data) {
+    currentGameState = data;
+
+    const round      = data.round || 1;
+    const state      = data.state || 'WAITING';
+    const players    = data.players || [];
+    const playerCount = players.length;
+
+    document.getElementById('round-num').textContent = round;
+
+    // --- Render Player Slots & Scoreboard ---
+    dock.innerHTML = '';
+    const scoreBody = document.getElementById('score-body');
+    if (scoreBody) scoreBody.innerHTML = '';
+
+    // Find highest score for highlight
+    const maxScore = Math.max(...players.map(p => p.score || 0));
+
+    players.forEach((p, idx) => {
+        // Player slot
+        const slot = document.createElement('div');
+        slot.className = 'p-slot';
+        slot.id        = `slot-${idx}`;
+        if (idx === myPlayerIndex) slot.classList.add('me');
+
+        const nameEl = document.createElement('span');
+        nameEl.className   = 'p-name';
+        nameEl.textContent = p.name;
+        slot.appendChild(nameEl);
+        dock.appendChild(slot);
+
+        // Scoreboard row
+        if (scoreBody) {
+            const tr = document.createElement('tr');
+            if ((p.score || 0) === maxScore && maxScore > 0) {
+                tr.className = 'highlight-row';
+            }
+            tr.innerHTML = `<td>${p.name}</td><td>${p.score || 0}</td>`;
+            scoreBody.appendChild(tr);
+        }
+    });
+
+    // --- Render Chits ---
+    renderChits(data);
+
+    // --- Status Text & Action Button ---
+    actionBtn.classList.add('hidden');
+    actionBtn.onclick = window.handleActionBtn;
+
+    switch (state) {
+        case 'WAITING': {
+            statusDiv.textContent = `Waiting for players… (${playerCount}/4)`;
+            // Host sees Start button when ≥2 players (for testing) or exactly 4
+            if (isHost && playerCount >= 2) {
+                actionBtn.textContent = playerCount < 4
+                    ? `Start with ${playerCount}p`
+                    : "🎲 Start Game!";
+                actionBtn.classList.remove('hidden');
+            }
+            break;
+        }
+        case 'PICKING': {
+            const myChit = data.chits ? data.chits.find(c => c.pickedBy === myPlayerIndex) : null;
+            const pickedCount = data.chits ? data.chits.filter(c => c.pickedBy !== -1).length : 0;
+            const totalCount  = players.length;
+            if (myChit) {
+                statusDiv.textContent = `⏳ Waiting for others… (${pickedCount}/${totalCount} picked)`;
+            } else {
+                statusDiv.textContent = "🖐 Grab a Parchi!";
+            }
+            break;
+        }
+        case 'REVEAL': {
+            statusDiv.textContent = "🎴 Revealing roles…";
+            break;
+        }
+        case 'GUESSING': {
+            if (amIMantri()) {
+                statusDiv.textContent = "🕵️ Mantri: Tap a player to guess Chor!";
+            } else {
+                // Find who the Mantri is and show their name
+                const mantriChitIdx = data.chits
+                    ? data.chits.findIndex((c, i) => data.roles && data.roles[i] === 'MANTRI' && c.pickedBy !== -1)
+                    : -1;
+                const mantriName = mantriChitIdx !== -1 && data.players
+                    ? (data.players[data.chits[mantriChitIdx].pickedBy] || {}).name || 'Mantri'
+                    : 'Mantri';
+                statusDiv.textContent = `🕵️ ${mantriName} is guessing…`;
+            }
+            break;
+        }
+        case 'RESULT': {
+            statusDiv.textContent = round >= 10 ? "🏆 Game Over!" : "Round Over!";
+            if (isHost) {
+                if (round < 10) {
+                    actionBtn.textContent = "Next Round →";
+                    actionBtn.classList.remove('hidden');
+                } else {
+                    actionBtn.textContent = "New Game";
+                    actionBtn.classList.remove('hidden');
+                }
+            }
+            break;
+        }
     }
 }
+
+// ============================================================
+//  6. CHIT RENDERING (Fixed state management)
+// ============================================================
+
+function renderChits(data) {
+    if (!data.chits || data.chits.length === 0) {
+        // Clean up all existing chit elements
+        document.querySelectorAll('.chit').forEach(el => el.remove());
+        return;
+    }
+
+    const state = data.state || 'WAITING';
+    const roles = data.roles || [];
+
+    data.chits.forEach((chit, chitIdx) => {
+        let div = document.getElementById(`chit-piece-${chitIdx}`);
+
+        // Create element if it doesn't exist yet
+        if (!div) {
+            div = document.createElement('div');
+            div.id        = `chit-piece-${chitIdx}`;
+            div.className = 'chit';
+
+            // Start at center for throw animation
+            div.style.left = '50%';
+            div.style.top  = '50%';
+            tableEl.appendChild(div);
+        }
+
+        // ── CHIT IS PICKED (in someone's hand) ──
+        if (chit.pickedBy !== undefined && chit.pickedBy !== -1) {
+            const ownerSlot = document.getElementById(`slot-${chit.pickedBy}`);
+
+            // Move into slot if not already there
+            if (ownerSlot && div.parentElement !== ownerSlot) {
+                // Clear table-positioning before reparenting
+                div.style.left      = '';
+                div.style.top       = '';
+                div.style.transform = '';
+                div.onclick         = null;
+
+                ownerSlot.appendChild(div);
+            }
+
+            // Decide what to show
+            const role       = roles[chitIdx]; // roles is indexed by chit array position
+            const isMyChit   = (chit.pickedBy === myPlayerIndex);
+            const isFullReveal = (state === 'RESULT');
+
+            // Visibility rules:
+            // - You always see your own role
+            // - RESULT: everyone sees everything
+            // - REVEAL phase: only RAJA is announced publicly (not MANTRI)
+            // - GUESSING phase: only RAJA stays public; Mantri/Sipahi/Chor stay hidden
+            //   (Mantri player still sees their own via isMyChit)
+            const showRole =
+                isMyChit                                                   ||
+                isFullReveal                                               ||
+                (state === 'REVEAL'   && role === 'RAJA')                  ||
+                (state === 'GUESSING' && role === 'RAJA');
+
+            if (showRole && role) {
+                // Revealed state — big card inside slot
+                div.className = 'chit revealed';
+                div.style.left = div.style.top = div.style.transform = '';
+                div.innerHTML  = chitRoleHTML(role);
+            } else {
+                // Folded — small corner tuck
+                div.className = 'chit in-hand';
+                div.style.left = div.style.top = div.style.transform = '';
+                div.innerHTML  = '';
+            }
+
+            div.onclick = null;
+        }
+        // ── CHIT IS ON TABLE ──
+        else {
+            // Move back to table if it was in a slot before
+            if (div.parentElement !== tableEl) {
+                tableEl.appendChild(div);
+            }
+
+            // Clear in-hand/revealed classes
+            div.className = 'chit';
+            div.innerHTML = '<div class="chit-back"></div>';
+
+            // Position (CSS transition will animate to this)
+            requestAnimationFrame(() => {
+                div.style.left      = chit.x + '%';
+                div.style.top       = chit.y + '%';
+                div.style.transform = `translate(-50%, -50%) rotate(${chit.rot}deg)`;
+            });
+
+            // Click to pick
+            div.onclick = () => {
+                if (state === 'PICKING') attemptPick(chitIdx);
+            };
+        }
+    });
+
+    // ── GUESSING: Make other players' slots tappable for Mantri ──
+    clearSlotGuessHandlers();
+    if (state === 'GUESSING' && amIMantri()) {
+        data.players.forEach((p, idx) => {
+            if (idx === myPlayerIndex) return; // Can't guess yourself
+
+            const slot = document.getElementById(`slot-${idx}`);
+            if (!slot) return;
+
+            // Find what chit this player holds
+            const heldChitIdx = data.chits.findIndex(c => c.pickedBy === idx);
+            if (heldChitIdx === -1) return;
+
+            const playerRole = roles[heldChitIdx];
+
+            // Mantri should only guess between unknown players (not RAJA — already revealed)
+            if (playerRole === 'RAJA') return;
+
+            slot.classList.add('mantri-can-pick');
+            slot.style.cursor = 'pointer';
+            slot.onclick = () => openGuessModal(idx, p.name, playerRole);
+        });
+    }
+}
+
+function clearSlotGuessHandlers() {
+    document.querySelectorAll('.p-slot').forEach(s => {
+        s.classList.remove('mantri-can-pick');
+        s.style.cursor = 'default';
+        s.onclick      = null;
+    });
+}
+
+function chitRoleHTML(role) {
+    const info = {
+        RAJA:   { emoji: '👑', pts: '1000 pts', color: '#b7950b' },
+        MANTRI: { emoji: '🎖️', pts: '800 pts',  color: '#1a5276' },
+        CHOR:   { emoji: '🦹', pts: '0 pts',    color: '#922b21' },
+        SIPAHI: { emoji: '🛡️', pts: '500 pts',  color: '#1e8449' }
+    };
+    const r = info[role] || { emoji: '?', pts: '', color: '#333' };
+    return `<div class="chit-role">
+        <span class="role-emoji">${r.emoji}</span>
+        <span class="role-name" style="color:${r.color}">${getHindi(role)}</span>
+        <span class="role-pts">${r.pts}</span>
+    </div>`;
+}
+
+// ============================================================
+//  7. GAME ACTIONS
+// ============================================================
+
+window.handleActionBtn = function () {
+    if (!isHost) return; // Guard: only host
+
+    const state = currentGameState.state;
+    if (state === 'WAITING' || state === 'RESULT') {
+        if ((currentGameState.round || 1) >= 10 && state === 'RESULT') {
+            resetGame();
+        } else {
+            startRound();
+        }
+    }
+};
+
+function startRound() {
+    const playerCount = currentGameState.players
+        ? currentGameState.players.length
+        : 4;
+
+    // Build role set based on player count
+    const allRoles = ['RAJA', 'MANTRI', 'CHOR', 'SIPAHI'];
+    const gameRoles = shuffle(allRoles.slice(0, playerCount));
+
+    // Scatter chits on the table
+    // Keep chits within safe bounds: 20%–80% so they don't hide under dock/bar
+    const scatteredChits = gameRoles.map((_, id) => ({
+        id,
+        x:   Math.floor(20 + Math.random() * 60),
+        y:   Math.floor(20 + Math.random() * 55), // 55 gives room above dock
+        rot: Math.floor(Math.random() * 360),
+        pickedBy: -1
+    }));
+
+    // Determine current round (stays same if starting fresh or carries on)
+    const currentRound = currentGameState.state === 'RESULT'
+        ? (currentGameState.round || 1)   // already incremented at end of last round
+        : (currentGameState.round || 1);
+
+    update(ref(db, `rooms/${roomCode}`), {
+        state:  'PICKING',
+        roles:  gameRoles,
+        chits:  scatteredChits,
+        round:  currentRound
+    });
+}
+
+function resetGame() {
+    // Reset scores and start fresh
+    const updates = {};
+    if (currentGameState.players) {
+        currentGameState.players.forEach((_, idx) => {
+            updates[`rooms/${roomCode}/players/${idx}/score`] = 0;
+        });
+    }
+    updates[`rooms/${roomCode}/round`] = 1;
+    updates[`rooms/${roomCode}/state`] = 'WAITING';
+    updates[`rooms/${roomCode}/chits`] = [];
+    updates[`rooms/${roomCode}/roles`] = [];
+    update(ref(db), updates);
+}
+
+// ── PICKING ──
+
+function attemptPick(chitIdx) {
+    // Guard: already have a chit
+    if (currentGameState.chits.some(c => c.pickedBy === myPlayerIndex)) return;
+    // Guard: wrong state
+    if (currentGameState.state !== 'PICKING') return;
+
+    // Optimistic lock: read fresh value before writing
+    get(child(ref(db), `rooms/${roomCode}/chits/${chitIdx}`)).then((snap) => {
+        const chit = snap.val();
+        if (!chit) return;
+        if (chit.pickedBy !== -1) return; // Already taken
+
+        // Mark as mine — then every client tries checkAllPicked (host guards the write)
+        set(ref(db, `rooms/${roomCode}/chits/${chitIdx}/pickedBy`), myPlayerIndex)
+            .then(() => checkAllPicked());
+    });
+}
+
+function checkAllPicked() {
+    // Small delay to let Firebase propagate
+    setTimeout(() => {
+        // Read the fresh state and chits from DB to avoid stale local cache
+        get(child(ref(db), `rooms/${roomCode}`)).then((snapshot) => {
+            const room = snapshot.val();
+            if (!room) return;
+
+            // Only the host drives state transitions to avoid race conditions
+            // But every client checks so the host's check definitely fires
+            if (!isHost) return;
+            if (room.state !== 'PICKING') return;
+
+            const chits = room.chits;
+            if (!chits || !Array.isArray(chits)) return;
+
+            const playerCount = room.players ? room.players.length : 4;
+            const pickedCount = chits.filter(c => c.pickedBy !== -1).length;
+
+            if (pickedCount < playerCount) return; // Not all picked yet
+
+            // All picked → REVEAL for 2 seconds, then GUESSING
+            update(ref(db, `rooms/${roomCode}`), { state: 'REVEAL' });
+            setTimeout(() => {
+                // Double-check we're still in REVEAL (guard against double-trigger)
+                get(child(ref(db), `rooms/${roomCode}/state`)).then(s => {
+                    if (s.val() === 'REVEAL') {
+                        update(ref(db, `rooms/${roomCode}`), { state: 'GUESSING' });
+                    }
+                });
+            }, 2200);
+        });
+    }, 400);
+}
+
+// ── GUESSING ──
+
+function openGuessModal(targetPlayerIdx, targetName, targetRole) {
+    guessTarget = { playerIdx: targetPlayerIdx, role: targetRole };
+    document.getElementById('modal-target-name').textContent = targetName;
+    guessModal.classList.remove('hidden');
+
+    document.getElementById('modal-yes-btn').onclick = () => {
+        closeGuessModal();
+        if (guessTarget) makeGuess(guessTarget.playerIdx, guessTarget.role);
+    };
+}
+
+window.closeGuessModal = function () {
+    guessModal.classList.add('hidden');
+    guessTarget = null;
+};
+
+function makeGuess(targetPlayerIdx, targetRole) {
+    if (currentGameState.state !== 'GUESSING') return; // Guard
+    if (!amIMantri()) return;                           // Guard
+
+    const isCorrect = (targetRole === 'CHOR');
+    const resultMsg = isCorrect
+        ? "✅ Mantri caught the Chor! +800"
+        : "❌ Wrong! Mantri arrested the Sipahi.";
+
+    log(resultMsg);
+    showToast(resultMsg, isCorrect ? 'toast-win' : 'toast-lose');
+
+    // Build score updates
+    const updates = {};
+
+    currentGameState.players.forEach((p, idx) => {
+        // Find which chit this player holds (by array index, not chit.id)
+        const heldChitIdx = currentGameState.chits.findIndex(c => c.pickedBy === idx);
+        if (heldChitIdx === -1) return;
+
+        const role = currentGameState.roles[heldChitIdx];
+        let points = 0;
+
+        if (role === 'RAJA')   points = 1000;
+        if (role === 'SIPAHI') points = 500;
+        if (role === 'MANTRI') points = isCorrect ? 800 : 0;
+        if (role === 'CHOR')   points = isCorrect ? 0   : 800;
+
+        updates[`rooms/${roomCode}/players/${idx}/score`] = (p.score || 0) + points;
+    });
+
+    const nextRound = (currentGameState.round || 1) + 1;
+    updates[`rooms/${roomCode}/state`] = 'RESULT';
+    updates[`rooms/${roomCode}/round`] = nextRound;
+
+    update(ref(db), updates);
+}
+
+// ============================================================
+//  8. HELPERS
+// ============================================================
+
+/** Is the current player holding the MANTRI chit right now? */
+function amIMantri() {
+    if (!currentGameState.chits || !currentGameState.roles) return false;
+    const heldChitIdx = currentGameState.chits.findIndex(c => c.pickedBy === myPlayerIndex);
+    if (heldChitIdx === -1) return false;
+    return currentGameState.roles[heldChitIdx] === 'MANTRI';
+}
+
+/** Fallback: is there a MANTRI player at all (not necessarily me) */
+function amIMantriPlayer(data) {
+    if (!data.chits || !data.roles) return false;
+    const idx = data.chits.findIndex(c => c.pickedBy === myPlayerIndex);
+    if (idx === -1) return false;
+    return data.roles[idx] === 'MANTRI';
+}
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function getHindi(role) {
+    return { RAJA: 'Raja', MANTRI: 'Mantri', CHOR: 'Chor', SIPAHI: 'Sipahi' }[role] || role;
+}
+
+function log(msg) {
+    if (!logArea) return;
+    const div = document.createElement('div');
+    div.className   = 'log-entry';
+    div.textContent = msg;
+    logArea.prepend(div);
+}
+
+let toastTimer = null;
+function showToast(msg, cls = '') {
+    clearTimeout(toastTimer);
+    toast.textContent = msg;
+    toast.className   = `toast ${cls}`;
+    toastTimer = setTimeout(() => toast.classList.add('hidden'), 3500);
+}
+
+// ============================================================
+//  9. FULLSCREEN
+// ============================================================
+
+window.toggleFullscreen = function () {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+        document.exitFullscreen().catch(() => {});
+    }
+};
+
+document.addEventListener('fullscreenchange', () => {
+    const btn   = document.getElementById('fullscreen-btn');
+    const panel = document.getElementById('scoreboard-panel');
+    const isMobile = window.innerWidth <= 700;
+
+    if (document.fullscreenElement) {
+        // Entered fullscreen
+        if (btn) btn.textContent = '⛶';
+        if (isMobile && panel) {
+            // On mobile fullscreen: keep panel in its current slide state, don't force-show
+            panel.classList.add('fullscreen-mobile');
+        }
+    } else {
+        // Exited fullscreen
+        if (btn) btn.textContent = '⛶';
+        if (panel) {
+            panel.classList.remove('fullscreen-mobile');
+        }
+    }
+});
+
+// ============================================================
+//  10. MOBILE SCOREBOARD TOGGLE
+// ============================================================
+
+window.toggleScoreboard = function () {
+    const panel = document.getElementById('scoreboard-panel');
+    if (!panel) return;
+    const isOpen = panel.classList.contains('active');
+    if (isOpen) {
+        panel.classList.remove('active');
+    } else {
+        panel.classList.add('active');
+    }
+};
+
+// Close scoreboard when tapping the dimmed overlay area (mobile)
+document.getElementById('scoreboard-panel')?.addEventListener('click', (e) => {
+    // Only close if the user tapped the panel background itself, not inner content
+    if (e.target === e.currentTarget) {
+        const panel = document.getElementById('scoreboard-panel');
+        if (panel) panel.classList.remove('active');
+    }
+});
