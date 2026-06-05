@@ -778,18 +778,22 @@ tr.highlight-row td { color: var(--accent-red); font-weight: bold; }
         min-height: 0;
     }
 
-    /* Scoreboard becomes full-screen slide-up */
+    /* Scoreboard becomes full-screen slide-up overlay */
     .scoreboard-area {
         position: fixed;
         inset: 0;
         z-index: 2000;
+        /* Hidden below screen — transition animates it up */
         transform: translateY(105%);
         box-shadow: none;
         flex: none;
         width: 100%;
+        /* Backdrop effect when opening */
+        transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
     }
     .scoreboard-area.active {
         transform: translateY(0);
+        box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
     }
     .notebook-paper {
         border-left: none;
@@ -817,13 +821,23 @@ tr.highlight-row td { color: var(--accent-red); font-weight: bold; }
     .modal-paper { transform: none; }
 }
 
-/* Fullscreen mode tweaks */
-:fullscreen .scoreboard-area,
-:-webkit-full-screen .scoreboard-area {
-    position: relative;
-    transform: none !important;
+/* Fullscreen tweaks — on desktop fullscreen the sidebar stays as-is.
+   On mobile fullscreen we do NOT force the scoreboard open; it keeps
+   its slide-up state (controlled by .active class via JS). */
+:fullscreen .game-area,
+:-webkit-full-screen .game-area {
+    height: 100vh;
 }
 :fullscreen #game-screen,
 :-webkit-full-screen #game-screen {
     height: 100vh;
+}
+/* Desktop fullscreen: scoreboard sidebar stays visible normally */
+@media (min-width: 701px) {
+    :fullscreen .scoreboard-area,
+    :-webkit-full-screen .scoreboard-area {
+        position: relative;
+        transform: none !important;
+        flex: 0 0 300px;
+    }
 }
