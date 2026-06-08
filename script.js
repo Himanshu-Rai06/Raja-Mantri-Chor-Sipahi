@@ -117,8 +117,28 @@ function enterGame(code, index) {
     // Subscribe to all state changes
     onValue(ref(db, 'rooms/' + roomCode), (snapshot) => {
         const data = snapshot.val();
-        if (data) renderGame(data);
-        else { alert("Room was deleted."); location.reload(); }
+        if (!data) { alert("Room was deleted."); location.reload(); return; }
+        
+        renderGame(data);
+
+        // CENTRALIZED HOST CHECK: Move game forward when all players have picked
+        if (isHost && data.state === 'PICKING' && data.chits) {
+            const playerCount = data.players ? data.players.length : 4;
+            const pickedCount = data.chits.filter(c => c.pickedBy !== -1).length;
+
+            if (pickedCount === playerCount) {
+                // Instantly switch to REVEAL to prevent multiple triggers
+                update(ref(db, `rooms/${roomCode}`), { state: 'REVEAL' });
+                
+                setTimeout(() => {
+                    get(child(ref(db), `rooms/${roomCode}/state`)).then(s => {
+                        if (s.val() === 'REVEAL') {
+                            update(ref(db, `rooms/${roomCode}`), { state: 'GUESSING' });
+                        }
+                    });
+                }, 2200);
+            }
+        }
     });
 }
 
@@ -460,8 +480,7 @@ function attemptPick(chitIdx) {
         if (chit.pickedBy !== -1) return; // Already taken
 
         // Mark as mine — then every client tries checkAllPicked (host guards the write)
-        set(ref(db, `rooms/${roomCode}/chits/${chitIdx}/pickedBy`), myPlayerIndex)
-            .then(() => checkAllPicked());
+        set(ref(db, `rooms/${roomCode}/chits/${chitIdx}/pickedBy`), myPlayerIndex);
     });
 }
 
